@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Warehouse</title>
+  <link rel="stylesheet" href="/web/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Warehouse</h1>
+      <div class="muted">JWT + RBAC + аудит через триггеры Postgres (антипаттерн)</div>
+    </header>
+
+    <section class="card">
+      <h2>Вход</h2>
+      <div class="row">
+        <label>
+          Username
+          <input id="username" value="ivan" />
+        </label>
+        <label>
+          Role
+          <select id="role">
+            <option value="viewer">viewer (read-only)</option>
+            <option value="manager" selected>manager (crud без delete)</option>
+            <option value="admin">admin (full)</option>
+          </select>
+        </label>
+        <button id="btnLogin">Войти</button>
+      </div>
+
+      <div class="row">
+        <div class="pill" id="whoami">Не авторизован</div>
+        <button class="secondary" id="btnLogout">Выйти</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Товары</h2>
+      <div class="row">
+        <label class="grow">
+          Поиск (sku / name / location)
+          <input id="search" placeholder="например: bolt" />
+        </label>
+        <button class="secondary" id="btnRefresh">Обновить</button>
+      </div>
+
+      <div class="grid">
+        <div>
+          <h3>Список</h3>
+          <table class="table" id="itemsTable">
+            <thead>
+              <tr>
+                <th>ID</th><th>SKU</th><th>Name</th><th>Qty</th><th>Location</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 id="formTitle">Добавить / Редактировать</h3>
+          <form id="itemForm" class="form">
+            <input type="hidden" id="itemId" />
+            <label>SKU <input id="sku" required /></label>
+            <label>Name <input id="name" required /></label>
+            <label>Qty <input id="qty" type="number" min="0" value="0" required /></label>
+            <label>Location <input id="location" placeholder="например: B-01" /></label>
+            <div class="row">
+              <button id="btnSave" type="submit">Сохранить</button>
+              <button class="secondary" id="btnReset" type="button">Сброс</button>
+            </div>
+            <div class="muted" id="permHint"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>История по товару</h2>
+      <div class="row">
+        <div class="pill">Item ID: <span id="histItemId">—</span></div>
+        <button class="secondary" id="btnExportCsv" disabled>Экспорт CSV</button>
+      </div>
+
+      <div class="row">
+        <label>from (RFC3339) <input id="fFrom" placeholder="2026-01-31T00:00:00Z" /></label>
+        <label>to (RFC3339) <input id="fTo" placeholder="2026-01-31T23:59:59Z" /></label>
+        <label>user <input id="fUser" placeholder="ivan" /></label>
+        <label>action <input id="fAction" placeholder="update" /></label>
+        <label>
+          diff
+          <select id="fDiff">
+            <option value="0" selected>off</option>
+            <option value="1">on</option>
+          </select>
+        </label>
+        <button class="secondary" id="btnLoadHistory" disabled>Загрузить</button>
+      </div>
+
+      <table class="table" id="historyTable">
+        <thead>
+          <tr>
+            <th>Time</th><th>Action</th><th>Actor</th><th>Role</th><th>Diff</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Output</h2>
+      <pre id="out" class="out"></pre>
+    </section>
+  </main>
+
+  <script src="/web/app.js"></script>
+</body>
+</html>
